@@ -300,6 +300,7 @@ if __name__ == "__main__":
         print("Server start")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncgetmetrics(scrapeurl))
+        timeforsave = time.perf_counter()
         for number in range(lenoftarget):
             name= "before" + str(number)
             merge(name)
@@ -307,19 +308,19 @@ if __name__ == "__main__":
         for number in range(lenoftarget):
             name= "before" + str(number)
             same,i,sameavg=error(name,0)
-            errorpernode(str(name)+","+"rate=0,"+str(same)+","+str(i)+","+str(sameavg))
+            errorpernode(str(timeforsave)+","+str(name)+","+"rate=0,"+str(same)+","+str(i)+","+str(sameavg))
             rounderror1=rounderror1+sameavg
 
             same,i,sameavg=error(name,1)
-            errorpernode(str(name)+","+"rate=0.05,"+str(same)+","+str(i)+","+str(sameavg))
+            errorpernode(str(timeforsave)+","+str(name)+","+"rate=0.05,"+str(same)+","+str(i)+","+str(sameavg))
             rounderror2=rounderror2+sameavg
 
             same,i,sameavg=error(name,2)
-            errorpernode(str(name)+","+"rate=0.1,"+str(same)+","+str(i)+","+str(sameavg))
+            errorpernode(str(timeforsave)+","+str(name)+","+"rate=0.1,"+str(same)+","+str(i)+","+str(sameavg))
             rounderror3=rounderror3+sameavg
 
-        errorpernode(str(rounderror1)+","+"rate=0,"+str(lenoftarget)+","+str(rounderror1/lenoftarget))
-        errorpernode(str(rounderror2)+","+"rate=0.05,"+str(lenoftarget)+","+str(rounderror2/lenoftarget))
-        errorpernode(str(rounderror3)+","+"rate=0.1,"+str(lenoftarget)+","+str(rounderror3/lenoftarget))
+        errorpernode(str(timeforsave)+","+str(rounderror1)+","+"rate=0,"+str(lenoftarget)+","+str(rounderror1/lenoftarget))
+        errorpernode(str(timeforsave)+","+str(rounderror2)+","+"rate=0.05,"+str(lenoftarget)+","+str(rounderror2/lenoftarget))
+        errorpernode(str(timeforsave)+","+str(rounderror3)+","+"rate=0.1,"+str(lenoftarget)+","+str(rounderror3/lenoftarget))
         initmemory()
         time.sleep(5)
