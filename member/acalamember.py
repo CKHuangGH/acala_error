@@ -205,7 +205,7 @@ def calcavg():
     end = time.perf_counter()
     timewriter("calcavg" + " " + str(end-start))
 
-def error(path):
+def error(path,rate):
     start = time.perf_counter()
     f = open(path, 'r')
     global maindict
@@ -240,8 +240,15 @@ def error(path):
             #print(avgdict[k],maindict[k])
             #if (float(maindict[k])*1.05) >= float(avgdict[k]) and (float(maindict[k])*0.95) <= float(avgdict[k]):
                 #print(float(maindict[k]),float(avgdict[k]))
-            if float(maindict[k])==float(avgdict[k]):
-                same+=1
+            if rate==0:
+                if float(maindict[k])==float(avgdict[k]):
+                    same+=1
+            elif rate==1:
+                if (float(maindict[k])*1.05) >= float(avgdict[k]) and (float(maindict[k])*0.95) <= float(avgdict[k]):
+                    same+=1
+            elif rate==2:
+                if (float(maindict[k])*1.1) >= float(avgdict[k]) and (float(maindict[k])*0.90) <= float(avgdict[k]):
+                    same+=1
             #print(maindict[k])
             # if maindict[k]=="0":
             #     j=0.00001
@@ -250,7 +257,7 @@ def error(path):
             # errorrate = abs(float(maindict[k])-float(avgdict[k]))/float(j)
             # errorwriter(str(k) + ": " +str(errorrate))
             # all=all+errorrate
-            i+=1
+        i+=1
     print(i)
     print(same)
     print(same/i)
@@ -284,12 +291,12 @@ if __name__ == "__main__":
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((HOST, PORT))
     server.listen(1)
-
     perpareend = time.perf_counter()
     timewriter("perpare"+ " "+ str(perpareend - perparestart))
-    qqq=0
-    while qqq<120:
-        rounderror=0
+    while 1:
+        rounderror1=0
+        rounderror2=0
+        rounderror3=0
         print("Server start")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncgetmetrics(scrapeurl))
@@ -299,11 +306,20 @@ if __name__ == "__main__":
         calcavg()
         for number in range(lenoftarget):
             name= "before" + str(number)
-            same,i,sameavg=error(name)
-            errorpernode(str(name)+","+str(same)+","+str(i)+","+str(sameavg))
-            rounderror=rounderror+sameavg
-        print(rounderror/lenoftarget)
-        errorpernode(str(rounderror)+","+str(lenoftarget)+","+str(rounderror/lenoftarget))
+            same,i,sameavg=error(name,0)
+            errorpernode(str(name)+","+"rate=0,"+str(same)+","+str(i)+","+str(sameavg))
+            rounderror1=rounderror1+sameavg
+
+            same,i,sameavg=error(name,1)
+            errorpernode(str(name)+","+"rate=0.05,"+str(same)+","+str(i)+","+str(sameavg))
+            rounderror2=rounderror2+sameavg
+
+            same,i,sameavg=error(name,2)
+            errorpernode(str(name)+","+"rate=0.1,"+str(same)+","+str(i)+","+str(sameavg))
+            rounderror3=rounderror3+sameavg
+
+        errorpernode(str(rounderror1)+","+"rate=0,"+str(lenoftarget)+","+str(rounderror1/lenoftarget))
+        errorpernode(str(rounderror2)+","+"rate=0.05,"+str(lenoftarget)+","+str(rounderror2/lenoftarget))
+        errorpernode(str(rounderror3)+","+"rate=0.1,"+str(lenoftarget)+","+str(rounderror3/lenoftarget))
         initmemory()
-        qqq+=1
         time.sleep(5)
