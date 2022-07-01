@@ -300,7 +300,7 @@ if __name__ == "__main__":
         print("Server start")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncgetmetrics(scrapeurl))
-        timeforsave = time.perf_counter()
+        timestamp = time.time()
         for number in range(lenoftarget):
             name= "before" + str(number)
             merge(name)
