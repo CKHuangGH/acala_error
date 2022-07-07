@@ -129,7 +129,7 @@ def gettargets(prom_host):
     scrapeurl = []
     for item in data["data"]["activeTargets"]:
         if item["labels"]["job"] == "node-exporter":
-            #if item["labels"]["instance"] != "10.158.4.2:9100":
+            if item["labels"]["instance"] != "10.158.4.2:9100":
                 scrapeurl.append(item["scrapeUrl"])
     end = time.perf_counter()
     timewriter("gettargets" + " " + str(end-start))
