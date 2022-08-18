@@ -257,7 +257,8 @@ def error(path,rate):
             # errorrate = abs(float(maindict[k])-float(avgdict[k]))/float(j)
             # errorwriter(str(k) + ": " +str(errorrate))
             # all=all+errorrate
-        i+=1
+            i+=1
+        
     print(i)
     print(same)
     print(same/i)
