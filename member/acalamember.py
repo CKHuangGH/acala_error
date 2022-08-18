@@ -149,7 +149,7 @@ async def fetch(link, session,number):
 
 async def asyncgetmetrics(links):
     async with ClientSession() as session:
-        tasks = [asyncio.create_task(fetch(link, session, links.index(link))) for link in links]  # 建立任務清單
+        tasks = [asyncio.create_task(fetch(link, session, links.index(link))) for link in links]
         await asyncio.gather(*tasks)
 
 def merge(path):
@@ -308,19 +308,20 @@ if __name__ == "__main__":
         for number in range(lenoftarget):
             name= "before" + str(number)
             same,i,sameavg=error(name,0)
-            errorpernode(str(timeforsave)+","+str(name)+","+"rate=0,"+str(same)+","+str(i)+","+str(sameavg))
+            errorpernode(str(timestamp)+","+str(name)+","+"rate=0,"+str(same)+","+str(i)+","+str(sameavg))
             rounderror1=rounderror1+sameavg
 
             same,i,sameavg=error(name,1)
-            errorpernode(str(timeforsave)+","+str(name)+","+"rate=0.05,"+str(same)+","+str(i)+","+str(sameavg))
+            errorpernode(str(timestamp)+","+str(name)+","+"rate=0.05,"+str(same)+","+str(i)+","+str(sameavg))
             rounderror2=rounderror2+sameavg
 
             same,i,sameavg=error(name,2)
-            errorpernode(str(timeforsave)+","+str(name)+","+"rate=0.1,"+str(same)+","+str(i)+","+str(sameavg))
+            errorpernode(str(timestamp)+","+str(name)+","+"rate=0.1,"+str(same)+","+str(i)+","+str(sameavg))
             rounderror3=rounderror3+sameavg
 
-        errorpernode(str(timeforsave)+","+str(rounderror1)+","+"rate=0,"+str(lenoftarget)+","+str(rounderror1/lenoftarget))
-        errorpernode(str(timeforsave)+","+str(rounderror2)+","+"rate=0.05,"+str(lenoftarget)+","+str(rounderror2/lenoftarget))
-        errorpernode(str(timeforsave)+","+str(rounderror3)+","+"rate=0.1,"+str(lenoftarget)+","+str(rounderror3/lenoftarget))
+        errorpernode(str(timestamp)+","+str(rounderror1)+","+"rate=0,"+str(lenoftarget)+","+str(rounderror1/lenoftarget))
+        errorpernode(str(timestamp)+","+str(rounderror2)+","+"rate=0.05,"+str(lenoftarget)+","+str(rounderror2/lenoftarget))
+        errorpernode(str(timestamp)+","+str(rounderror3)+","+"rate=0.1,"+str(lenoftarget)+","+str(rounderror3/lenoftarget))
         initmemory()
         time.sleep(5)
+        #time.sleep(60)
