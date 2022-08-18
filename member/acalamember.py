@@ -45,7 +45,7 @@ def errorwriter(text):
 
 def errorpernode(text):
     try:
-        f = open("error", 'a')
+        f = open("error.csv", 'a')
     except:
         print("Open exectime failed")
     try:
@@ -244,10 +244,10 @@ def error(path,rate):
                 if float(maindict[k])==float(avgdict[k]):
                     same+=1
             elif rate==1:
-                if (float(maindict[k])*1.05) >= float(avgdict[k]) and (float(maindict[k])*0.95) <= float(avgdict[k]):
+                if (float(maindict[k])) >= float(avgdict[k]*1.05) and (float(maindict[k])) <= float(avgdict[k]*0.95):
                     same+=1
             elif rate==2:
-                if (float(maindict[k])*1.1) >= float(avgdict[k]) and (float(maindict[k])*0.90) <= float(avgdict[k]):
+                if (float(maindict[k])) >= float(avgdict[k]*1.1) and (float(maindict[k])) <= float(avgdict[k]*0.90):
                     same+=1
             #print(maindict[k])
             # if maindict[k]=="0":
@@ -319,9 +319,9 @@ if __name__ == "__main__":
             errorpernode(str(timestamp)+","+str(name)+","+"rate=0.1,"+str(same)+","+str(i)+","+str(sameavg))
             rounderror3=rounderror3+sameavg
 
-        errorpernode(str(timestamp)+","+str(rounderror1)+","+"rate=0,"+str(lenoftarget)+","+str(rounderror1/lenoftarget))
-        errorpernode(str(timestamp)+","+str(rounderror2)+","+"rate=0.05,"+str(lenoftarget)+","+str(rounderror2/lenoftarget))
-        errorpernode(str(timestamp)+","+str(rounderror3)+","+"rate=0.1,"+str(lenoftarget)+","+str(rounderror3/lenoftarget))
+        #errorpernode(str(timestamp)+","+str(rounderror1)+","+"rate=0,"+str(lenoftarget)+","+str(rounderror1/lenoftarget))
+        #errorpernode(str(timestamp)+","+str(rounderror2)+","+"rate=0.05,"+str(lenoftarget)+","+str(rounderror2/lenoftarget))
+        #errorpernode(str(timestamp)+","+str(rounderror3)+","+"rate=0.1,"+str(lenoftarget)+","+str(rounderror3/lenoftarget))
         initmemory()
         time.sleep(5)
         #time.sleep(60)
