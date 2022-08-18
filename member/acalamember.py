@@ -244,10 +244,10 @@ def error(path,rate):
                 if float(maindict[k])==float(avgdict[k]):
                     same+=1
             elif rate==1:
-                if (float(maindict[k]) <= (float(avgdict[k]*1.05))) and (float(maindict[k]) >= (float(avgdict[k]*0.95))):
+                if (float(maindict[k]) <= (float(avgdict[k]*1.05))) or (float(maindict[k]) >= (float(avgdict[k]*0.95))):
                     same+=1
             elif rate==2:
-                if (float(maindict[k]) <= (float(avgdict[k]*1.1)))D and (float(maindict[k]) >= (float(avgdict[k]*0.90))):
+                if (float(maindict[k]) <= (float(avgdict[k]*1.1))) and (float(maindict[k]) >= (float(avgdict[k]*0.90))):
                     same+=1
             #print(maindict[k])
             # if maindict[k]=="0":
