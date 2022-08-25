@@ -1,0 +1,25 @@
+node_network_receive_bytes_total{device="ens3"} counter
+
+node_network_transmit_bytes_total{device="ens3"} counter
+
+node_sockstat_TCP_alloc gauge
+
+node_sockstat_TCP_inuse gauge
+
+node_disk_read_bytes_total{device="vda"} counter
+
+node_disk_io_now gauge Unit: I/O ops/sec(iops)
+
+node_disk_written_bytes_total{device="vda"} counter
+
+node_filesystem_free_bytes gauge
+
+node_cpu_seconds_total{cpu="0",mode="idle"} counter
+
+node_load1 gauge
+
+node_load15 gauge
+
+node_load5 gauge
+
+node_memory_MemFree_bytes gauge
