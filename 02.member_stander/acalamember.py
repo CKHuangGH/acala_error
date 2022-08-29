@@ -8,6 +8,7 @@ import shutil
 import logging
 from aiohttp import ClientSession
 import asyncio
+from scipy.stats import skew
 import numpy as np
 
 
@@ -58,13 +59,13 @@ def errorwriter(text):
     except:
         print("Write error")
 
-def errorpernode(text):
+def errorpernode(timestamp,name,std,mean,skewness,list):
     try:
         f = open("error.csv", 'a')
     except:
         print("Open exectime failed")
     try:
-        f.write(text)
+        f.write(str(timestamp)+","+str(name)+","+str(std)+","+str(mean)+","+str(skewness)+","+str(list))
         f.write("\n")
         f.close
     except:
@@ -226,6 +227,31 @@ def merge(path):
         tempdict = dict(zip(metricsname, valuelist))
         for k, v in tempdict.items():
             if k in maindict.keys():
+                if k == "node_load1":
+                    listnodeload1.append(float(tempdict[k]))
+                if k == "node_memory_MemFree_bytes":
+                    listmemory.append(float(tempdict[k]))
+                if k == "node_disk_io_now{device=\"vda\"}":
+                    listnodediskionow.append(float(tempdict[k]))
+                if k == "node_network_receive_bytes_total{device=\"ens3\"}":
+                    listnode_network_receive_bytes_total.append(float(tempdict[k]))
+                if k == "node_network_transmit_bytes_total{device=\"ens3\"}":
+                    list0.append(float(tempdict[k]))
+                if k == "node_sockstat_TCP_alloc":
+                    list1.append(float(tempdict[k]))
+                if k == "node_sockstat_TCP_inuse":
+                    list2.append(float(tempdict[k]))
+                if k == "node_disk_read_bytes_total{device=\"vda\"}":
+                    list3.append(float(tempdict[k]))
+                if k == "node_disk_written_bytes_total{device=\"vda\"}":
+                    list4.append(float(tempdict[k]))
+                if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}":
+                    list5.append(float(tempdict[k]))
+                if k == "node_load15":
+                    list6.append(float(tempdict[k]))
+                if k == "node_load5":
+                    list7.append(float(tempdict[k]))
+
                 maindict[k] = float(maindict[k])+float(v)
                 timesdict[k] = float(timesdict[k]) + 1.0
             else:
@@ -249,54 +275,91 @@ def calcavg():
 
 def calcstd(timestamp):
     print("calc std_dev")
+    print(listmemory)
+    print(listnodeload1)
+    print(listnodediskionow)
+    print(listnode_network_receive_bytes_total)
+    print(list0)
+    print(list1)
+    print(list2)
+    print(list3)
+    print(list4)
+    print(list5)
+    print(list6)
+    print(list7)
 
     std_dev = np.std(listmemory)
-    errorpernode(str(timestamp)+","+"node_memory_MemFree_bytes" +","+ str(std_dev))
+    means = np.mean(listmemory)
+    skewness=skew(listmemory)
+    errorpernode(timestamp,"node_memory_MemFree_bytes",std_dev,means,skewness,listmemory)
     listmemory.clear()
 
     std_dev = np.std(listnodeload1)
-    errorpernode(str(timestamp)+","+"node_load1" +","+ str(std_dev))
+    means = np.mean(listnodeload1)
+    skewness=skew(listnodeload1)
+    errorpernode(timestamp,"node_load1",std_dev,means,skewness,listnodeload1)
     listnodeload1.clear()
 
     std_dev = np.std(listnodediskionow)
-    errorpernode(str(timestamp)+","+"node_disk_io_now{device=\"vda\"}" +","+ str(std_dev))
+    means = np.mean(listnodediskionow)
+    skewness=skew(listnodediskionow)
+    errorpernode(timestamp,"node_disk_io_now{device=\"vda\"}",std_dev,means,skewness,listnodediskionow)
     listnodediskionow.clear()
 
     std_dev = np.std(listnode_network_receive_bytes_total)
-    errorpernode(str(timestamp)+","+"node_network_receive_bytes_total{device=\"ens3\"}" +","+ str(std_dev))
+    means = np.mean(listnode_network_receive_bytes_total)
+    skewness=skew(listnode_network_receive_bytes_total)
+    errorpernode(timestamp,"node_network_receive_bytes_total{device=\"ens3\"}",std_dev,means,skewness,listnode_network_receive_bytes_total)
     listnode_network_receive_bytes_total.clear()
 
     std_dev = np.std(list0)
-    errorpernode(str(timestamp)+","+"node_network_transmit_bytes_total{device=\"ens3\"}" +","+ str(std_dev))
+    means = np.mean(list0)
+    skewness=skew(list0)
+    errorpernode(timestamp,"node_network_transmit_bytes_total{device=\"ens3\"}",std_dev,means,skewness,list0)
     list0.clear()
 
     std_dev = np.std(list1)
-    errorpernode(str(timestamp)+","+"node_sockstat_TCP_alloc" +","+ str(std_dev))
+    means = np.mean(list1)
+    skewness=skew(list1)
+    errorpernode(timestamp,"node_sockstat_TCP_alloc",std_dev,means,skewness,list1)
     list1.clear()
 
     std_dev = np.std(list2)
-    errorpernode(str(timestamp)+","+"node_sockstat_TCP_inuse" +","+ str(std_dev))
+    means = np.mean(list2)
+    skewness=skew(list2)
+    errorpernode(timestamp,"node_sockstat_TCP_inuse",std_dev,means,skewness,list2)
     list2.clear()
 
     std_dev = np.std(list3)
-    errorpernode(str(timestamp)+","+"node_disk_read_bytes_total{device=\"vda\"}" +","+ str(std_dev))
+    means = np.mean(list3)
+    skewness=skew(list3)
+    errorpernode(timestamp,"node_disk_read_bytes_total{device=\"vda\"}",std_dev,means,skewness,list3)
     list3.clear()
 
     std_dev = np.std(list4)
-    errorpernode(str(timestamp)+","+"node_disk_written_bytes_total{device=\"vda\"}" +","+ str(std_dev))
+    means = np.mean(list4)
+    skewness=skew(list4)
+    errorpernode(timestamp,"node_disk_written_bytes_total{device=\"vda\"}",std_dev,means,skewness,list4)
     list4.clear()
 
     std_dev = np.std(list5)
-    errorpernode(str(timestamp)+","+"node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}" +","+ str(std_dev))
+    means = np.mean(list5)
+    skewness=skew(list5)
+    errorpernode(timestamp,"node_cpu_seconds_total{cpu=\"0\"mode=\"idle\"}",std_dev,means,skewness,list5)
     list5.clear()
 
     std_dev = np.std(list6)
-    errorpernode(str(timestamp)+","+"node_load15" +","+ str(std_dev))
+    means = np.mean(list6)
+    skewness=skew(list6)
+    errorpernode(timestamp,"node_load15",std_dev,means,skewness,list6)
     list6.clear()
 
     std_dev = np.std(list7)
-    errorpernode(str(timestamp)+","+"node_load5" +","+ str(std_dev))
+    means = np.mean(list7)
+    skewness=skew(list7)
+    errorpernode(timestamp,"node_load5",std_dev,means,skewness,list7)
     list7.clear()
+
 
 
 def initmemory():
@@ -315,7 +378,10 @@ if __name__ == "__main__":
     scrapeurl=gettargets(prom_host)
     lenoftarget=len(scrapeurl)
     clv=0
-
+    f = open("error.csv", 'a')
+    f.write("timestamp"+","+"metrics"+","+"std"+","+"average"+","+"skewness"+","+"list")
+    f.write("\n")
+    f.close
     BUFFER_SIZE = 8192
     HOST = '0.0.0.0'
     PORT = 54088
@@ -329,6 +395,7 @@ if __name__ == "__main__":
         rounderror2=0
         rounderror3=0
         print("Server start")
+        print(scrapeurl)
         timestamp = time.time()
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncgetmetrics(scrapeurl))
@@ -338,9 +405,6 @@ if __name__ == "__main__":
             merge(name)
         calcavg()
         calcstd(timestamp)
-        #errorpernode(str(timestamp)+","+str(rounderror1)+","+"rate=0,"+str(lenoftarget)+","+str(rounderror1/lenoftarget))
-        #errorpernode(str(timestamp)+","+str(rounderror2)+","+"rate=0.05,"+str(lenoftarget)+","+str(rounderror2/lenoftarget))
-        #errorpernode(str(timestamp)+","+str(rounderror3)+","+"rate=0.1,"+str(lenoftarget)+","+str(rounderror3/lenoftarget))
         initmemory()
         time.sleep(5)
         #time.sleep(60)
