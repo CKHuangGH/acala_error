@@ -8,6 +8,7 @@ import shutil
 import logging
 from aiohttp import ClientSession
 import asyncio
+import numpy as np
 
 
 timeout_seconds = 30
@@ -17,6 +18,17 @@ helplist = []
 checklist = []
 lastmaindict = {}
 avgdict = {}
+listnodeload1 = []
+listmemory = []
+listnodediskionow=[]
+listnode_network_receive_bytes_total = []
+list0 = []
+list1 = []
+list2 = []
+list3 = []
+list4 = []
+list5 = []
+
 logging.basicConfig(level=logging.INFO)
 
 def timewriter(text):
@@ -146,7 +158,6 @@ async def fetch(link, session,number):
     except:
         print("get metrics failed")
 
-
 async def asyncgetmetrics(links):
     async with ClientSession() as session:
         tasks = [asyncio.create_task(fetch(link, session, links.index(link))) for link in links]
@@ -158,6 +169,8 @@ def merge(path):
     global maindict
     global timesdict
     global checklist
+    global listnodeload1
+    global listmemory
     counterformetrics = 1
     valuelist = []
     metricsname = []
@@ -180,6 +193,27 @@ def merge(path):
     if not maindict:
         maindict = dict(zip(metricsname, valuelist))
         for k in maindict.keys():
+            if k == "node_load1":
+                listnodeload1.append(float(maindict[k]))
+            if k == "node_memory_MemFree_bytes":
+                listmemory.append(float(maindict[k]))
+            if k == "node_disk_io_now{device=\"vda\"}":
+                listnodediskionow.append(float(maindict[k]))
+            if k == "node_network_receive_bytes_total{device=\"ens3\"}":
+                listnode_network_receive_bytes_total.append(float(maindict[k]))
+            if k == "node_network_transmit_bytes_total{device=\"ens3\"}":
+                list0.append(float(maindict[k]))
+            if k == "node_sockstat_TCP_alloc":
+                list1.append(float(maindict[k]))
+            if k == "node_sockstat_TCP_inuse":
+                list2.append(float(maindict[k]))
+            if k == "node_disk_read_bytes_total{device=\"vda\"}":
+                list3.append(float(maindict[k]))
+            if k == "node_disk_written_bytes_total{device=\"vda\"}":
+                list4.append(float(maindict[k]))
+            if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}":
+                list5.append(float(maindict[k]))
+        for k in maindict.keys():
             timesdict.setdefault(k, 1.0)
     else:
         tempdict = dict(zip(metricsname, valuelist))
@@ -201,76 +235,53 @@ def calcavg():
         if k in timesdict.keys():
             maindict[k] = float(maindict[k])/float(timesdict[k])
     avgdict = maindict.copy()
+
     maindict.clear()
     end = time.perf_counter()
     timewriter("calcavg" + " " + str(end-start))
 
-def error(path,rate):
-    start = time.perf_counter()
-    f = open(path, 'r')
-    global maindict
-    global avgdict
-    global timesdict
-    global checklist
-    counterformetrics = 1
-    valuelist = []
-    metricsname = []
-    tempdict = {}
-    all=0
-    helplistappend = helplist.append
-    checklistappend = checklist.append
-    valuelistappend = valuelist.append
-    metricsnameappend = metricsname.append
-    for line in f.readlines():
-        if line[0] == "#":
-            if counterformetrics % 2 == 0:
-                if line not in helplist:
-                    helplistappend(line)
-                    checklistappend(parseforstrhelp(line))
-            counterformetrics += 1
-        else:
-            valuelistappend(parsevalue(line))
-            metricsnameappend(parsename(line))
-    
-    maindict = dict(zip(metricsname, valuelist))
-    i=0
-    same=0
-    for k in maindict.keys():
-        if k in avgdict.keys():
-            #print(avgdict[k],maindict[k])
-            #if (float(maindict[k])*1.05) >= float(avgdict[k]) and (float(maindict[k])*0.95) <= float(avgdict[k]):
-                #print(float(maindict[k]),float(avgdict[k]))
-            if rate==0:
-                if float(maindict[k])==float(avgdict[k]):
-                    same+=1
-            elif rate==1:
-                if (float(maindict[k]) <= (float(avgdict[k]*1.05))) and (float(maindict[k]) >= (float(avgdict[k]*0.95))):
-                    same+=1
-                elif (float(maindict[k]) >= (float(avgdict[k]*1.05))) and (float(maindict[k]) <= (float(avgdict[k]*0.95))):
-                    same+=1
-            elif rate==2:
-                if (float(maindict[k]) <= (float(avgdict[k]*1.1))) and (float(maindict[k]) >= (float(avgdict[k]*0.90))):
-                    same+=1
-                elif (float(maindict[k]) >= (float(avgdict[k]*1.1))) and (float(maindict[k]) <= (float(avgdict[k]*0.90))):
-                    same+=1
-            #print(maindict[k])
-            # if maindict[k]=="0":
-            #     j=0.00001
-            # else:
-            #     j=maindict[k]
-            # errorrate = abs(float(maindict[k])-float(avgdict[k]))/float(j)
-            # errorwriter(str(k) + ": " +str(errorrate))
-            # all=all+errorrate
-            i+=1
-        
-    print(i)
-    print(same)
-    print(same/i)
-    #avgerror=float(all)/float(i)
-    #errorpernode(str(avgerror))
-    
-    f.close()
-    return same,i,same/i
+def calcstd(timestamp):
+    print("calc std_dev")
+
+    std_dev = np.std(listmemory)
+    errorpernode(str(timestamp)+","+"node_memory_MemFree_bytes" +","+ str(std_dev))
+    listmemory.clear()
+
+    std_dev = np.std(listnodeload1)
+    errorpernode(str(timestamp)+","+"node_load1" +","+ str(std_dev))
+    listnodeload1.clear()
+
+    std_dev = np.std(listnodediskionow)
+    errorpernode(str(timestamp)+","+"node_disk_io_now{device=\"vda\"}" +","+ str(std_dev))
+    listnodediskionow.clear()
+
+    std_dev = np.std(listnode_network_receive_bytes_total)
+    errorpernode(str(timestamp)+","+"node_network_receive_bytes_total{device=\"ens3\"}" +","+ str(std_dev))
+    listnode_network_receive_bytes_total.clear()
+
+    std_dev = np.std(list0)
+    errorpernode(str(timestamp)+","+"node_network_transmit_bytes_total{device=\"ens3\"}" +","+ str(std_dev))
+    list0.clear()
+
+    std_dev = np.std(list1)
+    errorpernode(str(timestamp)+","+"node_sockstat_TCP_alloc" +","+ str(std_dev))
+    list1.clear()
+
+    std_dev = np.std(list2)
+    errorpernode(str(timestamp)+","+"node_sockstat_TCP_inuse" +","+ str(std_dev))
+    list2.clear()
+
+    std_dev = np.std(list3)
+    errorpernode(str(timestamp)+","+"node_disk_read_bytes_total{device=\"vda\"}" +","+ str(std_dev))
+    list3.clear()
+
+    std_dev = np.std(list4)
+    errorpernode(str(timestamp)+","+"node_disk_written_bytes_total{device=\"vda\"}" +","+ str(std_dev))
+    list4.clear()
+
+    std_dev = np.std(list5)
+    errorpernode(str(timestamp)+","+"node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}" +","+ str(std_dev))
+    list5.clear()
 
 
 def initmemory():
@@ -303,27 +314,15 @@ if __name__ == "__main__":
         rounderror2=0
         rounderror3=0
         print("Server start")
+        timestamp = time.time()
         loop = asyncio.get_event_loop()
         loop.run_until_complete(asyncgetmetrics(scrapeurl))
-        timestamp = time.time()
+
         for number in range(lenoftarget):
             name= "before" + str(number)
             merge(name)
         calcavg()
-        for number in range(lenoftarget):
-            name= "before" + str(number)
-            same,i,sameavg=error(name,0)
-            errorpernode(str(timestamp)+","+str(name)+","+"rate=0,"+str(same)+","+str(i)+","+str(sameavg))
-            rounderror1=rounderror1+sameavg
-
-            same,i,sameavg=error(name,1)
-            errorpernode(str(timestamp)+","+str(name)+","+"rate=0.05,"+str(same)+","+str(i)+","+str(sameavg))
-            rounderror2=rounderror2+sameavg
-
-            same,i,sameavg=error(name,2)
-            errorpernode(str(timestamp)+","+str(name)+","+"rate=0.1,"+str(same)+","+str(i)+","+str(sameavg))
-            rounderror3=rounderror3+sameavg
-
+        calcstd(timestamp)
         #errorpernode(str(timestamp)+","+str(rounderror1)+","+"rate=0,"+str(lenoftarget)+","+str(rounderror1/lenoftarget))
         #errorpernode(str(timestamp)+","+str(rounderror2)+","+"rate=0.05,"+str(lenoftarget)+","+str(rounderror2/lenoftarget))
         #errorpernode(str(timestamp)+","+str(rounderror3)+","+"rate=0.1,"+str(lenoftarget)+","+str(rounderror3/lenoftarget))

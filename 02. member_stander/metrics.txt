@@ -1,25 +1,28 @@
-node_network_receive_bytes_total{device="ens3"} counter
+node_network_receive_bytes_total{device="ens3"} counter v
 
-node_network_transmit_bytes_total{device="ens3"} counter
+node_network_transmit_bytes_total{device="ens3"} counter v
 
-node_sockstat_TCP_alloc gauge
+node_sockstat_TCP_alloc gauge v
 
-node_sockstat_TCP_inuse gauge
+node_sockstat_TCP_inuse gauge v
 
-node_disk_read_bytes_total{device="vda"} counter
+node_disk_read_bytes_total{device="vda"} counter v
 
-node_disk_io_now gauge Unit: I/O ops/sec(iops)
+node_disk_io_now gauge Unit: I/O ops/sec(iops) v
 
-node_disk_written_bytes_total{device="vda"} counter
+node_disk_written_bytes_total{device="vda"} counter v
 
 node_filesystem_free_bytes gauge
 
-node_cpu_seconds_total{cpu="0",mode="idle"} counter
+node_cpu_seconds_total{cpu="0",mode="idle"} counter v
 
-node_load1 gauge
+node_load1 gauge v
 
 node_load15 gauge
 
 node_load5 gauge
 
-node_memory_MemFree_bytes gauge
+node_memory_MemFree_bytes gauge v
+
+1048576 for mi byte
+1073741824 for gi byte
