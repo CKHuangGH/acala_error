@@ -28,6 +28,9 @@ list2 = []
 list3 = []
 list4 = []
 list5 = []
+list6 = []
+list7 = []
+list8 = []
 
 logging.basicConfig(level=logging.INFO)
 
@@ -213,6 +216,10 @@ def merge(path):
                 list4.append(float(maindict[k]))
             if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}":
                 list5.append(float(maindict[k]))
+            if k == "node_load15":
+                list6.append(float(maindict[k]))
+            if k == "node_load5":
+                list7.append(float(maindict[k]))
         for k in maindict.keys():
             timesdict.setdefault(k, 1.0)
     else:
@@ -282,6 +289,14 @@ def calcstd(timestamp):
     std_dev = np.std(list5)
     errorpernode(str(timestamp)+","+"node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}" +","+ str(std_dev))
     list5.clear()
+
+    std_dev = np.std(list6)
+    errorpernode(str(timestamp)+","+"node_load15" +","+ str(std_dev))
+    list6.clear()
+
+    std_dev = np.std(list7)
+    errorpernode(str(timestamp)+","+"node_load5" +","+ str(std_dev))
+    list7.clear()
 
 
 def initmemory():

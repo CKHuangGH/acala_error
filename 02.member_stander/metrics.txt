@@ -18,9 +18,9 @@ node_cpu_seconds_total{cpu="0",mode="idle"} counter v
 
 node_load1 gauge v
 
-node_load15 gauge
+node_load15 gauge v
 
-node_load5 gauge
+node_load5 gauge v
 
 node_memory_MemFree_bytes gauge v
 
