@@ -379,7 +379,7 @@ if __name__ == "__main__":
     lenoftarget=len(scrapeurl)
     clv=0
     f = open("error.csv", 'a')
-    f.write("timestamp"+","+"metrics"+","+"std"+","+"average"+","+"skewness"+","+"list")
+    f.write("timestamp"+","+"metrics"+","+"std"+","+"average"+","+"std/average"+","+"skewness"+","+"list")
     f.write("\n")
     f.close
     BUFFER_SIZE = 8192
