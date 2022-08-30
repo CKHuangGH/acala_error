@@ -65,7 +65,7 @@ def errorpernode(timestamp,name,std,mean,skewness,list):
     except:
         print("Open exectime failed")
     try:
-        f.write(str(timestamp)+","+str(name)+","+str(std)+","+str(mean)+","+str(skewness)+","+str(list))
+        f.write(str(timestamp)+","+str(name)+","+str(std)+","+str(mean)+","+str(std/mean)+","+str(skewness)+","+str(list))
         f.write("\n")
         f.close
     except:
@@ -199,17 +199,21 @@ def merge(path):
         for k in maindict.keys():
             if k == "node_load1":
                 listnodeload1.append(float(maindict[k]))
+            if k == "node_load15":
+                list6.append(float(maindict[k]))
+            if k == "node_load5":
+                list7.append(float(maindict[k]))
             if k == "node_memory_MemFree_bytes":
                 listmemory.append(float(maindict[k]))
             if k == "node_disk_io_now{device=\"vda\"}":
                 listnodediskionow.append(float(maindict[k]))
-            if k == "node_network_receive_bytes_total{device=\"ens3\"}":
-                listnode_network_receive_bytes_total.append(float(maindict[k]))
+            if k == "node_memory_MemAvailable_bytes":
+                list8.append(float(maindict[k]))
             if k == "node_network_transmit_bytes_total{device=\"ens3\"}":
                 list0.append(float(maindict[k]))
             if k == "node_sockstat_TCP_alloc":
                 list1.append(float(maindict[k]))
-            if k == "node_sockstat_TCP_inuse":
+            if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"idle\"}":
                 list2.append(float(maindict[k]))
             if k == "node_disk_read_bytes_total{device=\"vda\"}":
                 list3.append(float(maindict[k]))
@@ -217,10 +221,7 @@ def merge(path):
                 list4.append(float(maindict[k]))
             if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}":
                 list5.append(float(maindict[k]))
-            if k == "node_load15":
-                list6.append(float(maindict[k]))
-            if k == "node_load5":
-                list7.append(float(maindict[k]))
+
         for k in maindict.keys():
             timesdict.setdefault(k, 1.0)
     else:
@@ -233,13 +234,13 @@ def merge(path):
                     listmemory.append(float(tempdict[k]))
                 if k == "node_disk_io_now{device=\"vda\"}":
                     listnodediskionow.append(float(tempdict[k]))
-                if k == "node_network_receive_bytes_total{device=\"ens3\"}":
-                    listnode_network_receive_bytes_total.append(float(tempdict[k]))
+                if k == "node_memory_MemAvailable_bytes":
+                    list8.append(float(tempdict[k]))
                 if k == "node_network_transmit_bytes_total{device=\"ens3\"}":
                     list0.append(float(tempdict[k]))
                 if k == "node_sockstat_TCP_alloc":
                     list1.append(float(tempdict[k]))
-                if k == "node_sockstat_TCP_inuse":
+                if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"idle\"}":
                     list2.append(float(tempdict[k]))
                 if k == "node_disk_read_bytes_total{device=\"vda\"}":
                     list3.append(float(tempdict[k]))
@@ -251,7 +252,6 @@ def merge(path):
                     list6.append(float(tempdict[k]))
                 if k == "node_load5":
                     list7.append(float(tempdict[k]))
-
                 maindict[k] = float(maindict[k])+float(v)
                 timesdict[k] = float(timesdict[k]) + 1.0
             else:
@@ -278,7 +278,7 @@ def calcstd(timestamp):
     print(listmemory)
     print(listnodeload1)
     print(listnodediskionow)
-    print(listnode_network_receive_bytes_total)
+    print(list8)
     print(list0)
     print(list1)
     print(list2)
@@ -306,11 +306,11 @@ def calcstd(timestamp):
     errorpernode(timestamp,"node_disk_io_now{device=\"vda\"}",std_dev,means,skewness,listnodediskionow)
     listnodediskionow.clear()
 
-    std_dev = np.std(listnode_network_receive_bytes_total)
-    means = np.mean(listnode_network_receive_bytes_total)
-    skewness=skew(listnode_network_receive_bytes_total)
-    errorpernode(timestamp,"node_network_receive_bytes_total{device=\"ens3\"}",std_dev,means,skewness,listnode_network_receive_bytes_total)
-    listnode_network_receive_bytes_total.clear()
+    std_dev = np.std(list8)
+    means = np.mean(list8)
+    skewness=skew(list8)
+    errorpernode(timestamp,"node_memory_MemAvailable_bytes",std_dev,means,skewness,list8)
+    list8.clear()
 
     std_dev = np.std(list0)
     means = np.mean(list0)
@@ -327,7 +327,7 @@ def calcstd(timestamp):
     std_dev = np.std(list2)
     means = np.mean(list2)
     skewness=skew(list2)
-    errorpernode(timestamp,"node_sockstat_TCP_inuse",std_dev,means,skewness,list2)
+    errorpernode(timestamp,"node_cpu_seconds_total{cpu=\"1\"mode=\"idle\"}",std_dev,means,skewness,list2)
     list2.clear()
 
     std_dev = np.std(list3)
