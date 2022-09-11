@@ -19,6 +19,7 @@ helplist = []
 checklist = []
 lastmaindict = {}
 avgdict = {}
+
 listnodeload1 = []
 listmemory = []
 listnodediskionow=[]
@@ -32,6 +33,8 @@ list5 = []
 list6 = []
 list7 = []
 list8 = []
+list9 = []
+list10 = []
 
 logging.basicConfig(level=logging.INFO)
 
@@ -242,9 +245,9 @@ def merge(path):
                     list1.append(float(tempdict[k]))
                 if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"idle\"}":
                     list2.append(float(tempdict[k]))
-                if k == "node_disk_read_bytes_total{device=\"vda\"}":
+                if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"system\"}":
                     list3.append(float(tempdict[k]))
-                if k == "node_disk_written_bytes_total{device=\"vda\"}":
+                if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"system\"}":
                     list4.append(float(tempdict[k]))
                 if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}":
                     list5.append(float(tempdict[k]))
@@ -252,6 +255,10 @@ def merge(path):
                     list6.append(float(tempdict[k]))
                 if k == "node_load5":
                     list7.append(float(tempdict[k]))
+                if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"user\"}":
+                    list9.append(float(tempdict[k]))
+                if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"user\"}":
+                    list10.append(float(tempdict[k]))                    
                 maindict[k] = float(maindict[k])+float(v)
                 timesdict[k] = float(timesdict[k]) + 1.0
             else:
@@ -287,6 +294,8 @@ def calcstd(timestamp):
     print(list5)
     print(list6)
     print(list7)
+    print(list9)
+    print(list10)
 
     std_dev = np.std(listmemory)
     means = np.mean(listmemory)
@@ -333,13 +342,13 @@ def calcstd(timestamp):
     std_dev = np.std(list3)
     means = np.mean(list3)
     skewness=skew(list3)
-    errorpernode(timestamp,"node_disk_read_bytes_total{device=\"vda\"}",std_dev,means,skewness,list3)
+    errorpernode(timestamp,"node_cpu_seconds_total{cpu=\"0\"mode=\"system\"}",std_dev,means,skewness,list3)
     list3.clear()
 
     std_dev = np.std(list4)
     means = np.mean(list4)
     skewness=skew(list4)
-    errorpernode(timestamp,"node_disk_written_bytes_total{device=\"vda\"}",std_dev,means,skewness,list4)
+    errorpernode(timestamp,"node_cpu_seconds_total{cpu=\"1\"mode=\"system\"}",std_dev,means,skewness,list4)
     list4.clear()
 
     std_dev = np.std(list5)
@@ -359,6 +368,18 @@ def calcstd(timestamp):
     skewness=skew(list7)
     errorpernode(timestamp,"node_load5",std_dev,means,skewness,list7)
     list7.clear()
+    
+    std_dev = np.std(list9)
+    means = np.mean(list9)
+    skewness=skew(list9)
+    errorpernode(timestamp,"node_cpu_seconds_total{cpu=\"0\"mode=\"user\"}",std_dev,means,skewness,list9)
+    list9.clear()
+    
+    std_dev = np.std(list10)
+    means = np.mean(list10)
+    skewness=skew(list10)
+    errorpernode(timestamp,"node_cpu_seconds_total{cpu=\"1\"mode=\"user\"}",std_dev,means,skewness,list10)
+    list10.clear()
 
 
 
