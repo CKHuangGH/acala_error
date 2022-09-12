@@ -218,12 +218,16 @@ def merge(path):
                 list1.append(float(maindict[k]))
             if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"idle\"}":
                 list2.append(float(maindict[k]))
-            if k == "node_disk_read_bytes_total{device=\"vda\"}":
+            if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"system\"}":
                 list3.append(float(maindict[k]))
-            if k == "node_disk_written_bytes_total{device=\"vda\"}":
+            if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"system\"}":
                 list4.append(float(maindict[k]))
             if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}":
                 list5.append(float(maindict[k]))
+            if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"user\"}":
+                list9.append(float(tempdict[k]))
+            if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"user\"}":
+                list10.append(float(tempdict[k]))     
 
         for k in maindict.keys():
             timesdict.setdefault(k, 1.0)
@@ -233,6 +237,10 @@ def merge(path):
             if k in maindict.keys():
                 if k == "node_load1":
                     listnodeload1.append(float(tempdict[k]))
+                if k == "node_load15":
+                    list6.append(float(tempdict[k]))
+                if k == "node_load5":
+                    list7.append(float(tempdict[k]))
                 if k == "node_memory_MemFree_bytes":
                     listmemory.append(float(tempdict[k]))
                 if k == "node_disk_io_now{device=\"vda\"}":
@@ -251,10 +259,6 @@ def merge(path):
                     list4.append(float(tempdict[k]))
                 if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}":
                     list5.append(float(tempdict[k]))
-                if k == "node_load15":
-                    list6.append(float(tempdict[k]))
-                if k == "node_load5":
-                    list7.append(float(tempdict[k]))
                 if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"user\"}":
                     list9.append(float(tempdict[k]))
                 if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"user\"}":
