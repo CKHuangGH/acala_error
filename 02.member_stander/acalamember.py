@@ -225,10 +225,9 @@ def merge(path):
             if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"idle\"}":
                 list5.append(float(maindict[k]))
             if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"user\"}":
-                list9.append(float(tempdict[k]))
+                list9.append(float(maindict[k]))
             if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"user\"}":
-                list10.append(float(tempdict[k]))     
-
+                list10.append(float(maindict[k]))
         for k in maindict.keys():
             timesdict.setdefault(k, 1.0)
     else:
@@ -262,7 +261,7 @@ def merge(path):
                 if k == "node_cpu_seconds_total{cpu=\"0\",mode=\"user\"}":
                     list9.append(float(tempdict[k]))
                 if k == "node_cpu_seconds_total{cpu=\"1\",mode=\"user\"}":
-                    list10.append(float(tempdict[k]))                    
+                    list10.append(float(tempdict[k]))
                 maindict[k] = float(maindict[k])+float(v)
                 timesdict[k] = float(timesdict[k]) + 1.0
             else:
